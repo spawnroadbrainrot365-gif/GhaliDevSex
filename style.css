@@ -1,0 +1,16 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+.container { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; width: 100%; max-width: 900px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); }
+h1 { color: #fff; text-align: center; margin-bottom: 30px; font-size: 2em; }
+label { color: #a0a0ff; display: block; margin-bottom: 10px; font-size: 1.1em; font-weight: bold; }
+textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e0e0ff; padding: 15px; font-family: 'Courier New', monospace; font-size: 14px; resize: vertical; direction: ltr; }
+textarea:focus { outline: none; border-color: #5865f2; box-shadow: 0 0 15px rgba(88,101,242,0.3); }
+#jsCode { min-height: 400px; }
+#packageJson { min-height: 150px; }
+.btn-host { width: 100%; padding: 15px; background: linear-gradient(135deg, #5865f2, #4752c4); border: none; border-radius: 10px; color: white; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 20px; }
+.btn-host:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(88,101,242,0.4); }
+.btn-host:disabled { opacity: 0.5; cursor: not-allowed; }
+#status { margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; display: none; }
+.status-success { background: rgba(0,255,0,0.1); color: #00ff88; border: 1px solid #00ff88; display: block !important; }
+.status-error { background: rgba(255,0,0,0.1); color: #ff4444; border: 1px solid #ff4444; display: block !important; }
+.status-loading { background: rgba(255,255,0,0.1); color: #ffaa00; border: 1px solid #ffaa00; display: block !important; }
