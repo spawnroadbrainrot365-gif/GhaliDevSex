@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استضافة بوت ديسكورد</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(88, 101, 242, 0.5);
+        }
+        .input-group {
+            margin-bottom: 25px;
+        }
+        label {
+            color: #a0a0ff;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #e0e0ff;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.3s;
+            direction: ltr;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #5865f2;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.3);
+        }
+        #jsCode {
+            min-height: 400px;
+        }
+        #packageJson {
+            min-height: 150px;
+        }
+        .btn-host {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #5865f2, #4752c4);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn-host:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(88, 101, 242, 0.4);
+        }
+        .btn-host:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        .status-success {
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+        .status-error {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+        .status-loading {
+            background: rgba(255, 255, 0, 0.1);
+            color: #ffaa00;
+            border: 1px solid #ffaa00;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 استضافة بوت ديسكورد</h1>
+        
+        <div class="input-group">
+            <label>📄 كود bot.js:</label>
+            <textarea id="jsCode" placeholder="الصق كود البوت هنا..."></textarea>
+        </div>
+        
+        <div class="input-group">
+            <label>📦 package.json:</label>
+            <textarea id="packageJson" placeholder='{"name": "bot", "dependencies": {"discord.js": "^14.14.1"}}'></textarea>
+        </div>
+        
+        <button class="btn-host" id="hostBtn" onclick="hostBot()">
+            ⚡ Host Bot
+        </button>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function hostBot() {
+            const btn = document.getElementById('hostBtn');
+            const statusDiv = document.getElementById('status');
+            const jsCode = document.getElementById('jsCode').value.trim();
+            const packageJson = document.getElementById('packageJson').value.trim();
+            
+            if (!jsCode || !packageJson) {
+                showStatus('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            try {
+                JSON.parse(packageJson);
+            } catch (e) {
+                showStatus('⚠️ صيغة package.json غير صحيحة', 'error');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> جاري الاستضافة...';
+            showStatus('جاري تجهيز البوت وتشغيله...', 'loading');
+            
+            try {
+                const response = await fetch('/api/host', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: jsCode, package: packageJson })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showStatus('✅ تم تشغيل البوت بنجاح! البوت يعمل الآن 24/7', 'success');
+                } else {
+                    showStatus('❌ فشل التشغيل: ' + data.error, 'error');
+                }
+            } catch (err) {
+                showStatus('❌ خطأ في الاتصال بالسيرفر', 'error');
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = '⚡ Host Bot';
+        }
+        
+        function showStatus(msg, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = msg;
+            statusDiv.className = '';
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success') statusDiv.classList.add('status-success');
+            else if (type === 'error') statusDiv.classList.add('status-error');
+            else if (type === 'loading') statusDiv.classList.add('status-loading');
+        }
+    </script>
+</body>
+</html>
